@@ -2,7 +2,13 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
 app.use(express.json());
 
 app.post("/api/chat", async (req, res) => {
@@ -21,9 +27,11 @@ app.post("/api/chat", async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error("Proxy error:", error);
-    res.status(500).json({ error: "Proxy request failed" });
+    res.status(500).json({ error: "Proxy request failed", details: error.message });
   }
 });
+
+app.options("/api/chat", cors());
 
 app.get("/", (req, res) => {
   res.json({ status: "Steward proxy is running" });
