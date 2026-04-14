@@ -9,7 +9,12 @@ app.use(express.json());
 app.options("*", cors());
 
 app.post("/api/chat", (req, res) => {
+  console.log("Received request body:", JSON.stringify(req.body).substring(0, 200));
+  console.log("API Key exists:", !!process.env.ANTHROPIC_API_KEY);
+  console.log("API Key starts with:", process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY.substring(0, 10) : "MISSING");
+
   const body = JSON.stringify(req.body);
+
   const options = {
     hostname: "api.anthropic.com",
     path: "/v1/messages",
@@ -26,6 +31,8 @@ app.post("/api/chat", (req, res) => {
     let data = "";
     apiRes.on("data", (chunk) => { data += chunk; });
     apiRes.on("end", () => {
+      console.log("Anthropic status:", apiRes.statusCode);
+      console.log("Anthropic response:", data.substring(0, 300));
       try {
         res.status(apiRes.statusCode).json(JSON.parse(data));
       } catch (e) {
