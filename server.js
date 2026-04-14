@@ -10,7 +10,6 @@ app.options("*", cors());
 
 app.post("/api/chat", (req, res) => {
   const body = JSON.stringify(req.body);
-
   const options = {
     hostname: "api.anthropic.com",
     path: "/v1/messages",
